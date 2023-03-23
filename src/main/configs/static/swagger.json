@@ -1,0 +1,280 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "api para busca da previsão do tempo",
+        "version": "1.0.0",
+        "title": "Targer Api",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "contact": {
+            "name": "Leonardo de Faveri",
+            "email": "faver_i@hotmail.com",
+            "url": "https://www.linkedin.com/in/leonardo-de-faveri"
+          }
+    },
+    "tags": [
+        {
+            "name": "Login API",
+            "description": "api para cadastrar e autenticar o usuário"
+        },
+        {
+            "name": "Weather Data API",
+            "description": "api para buscar a previsão de 4 dias de uma específica"
+        }
+    ],
+    "servers": [
+        {
+            "url": "/api",
+            "description": "Servidor principal"
+        }
+    ],
+    "components": {
+        "schemas": {
+            "signupSchema": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "loginSchema": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "authSchema": {
+                "type": "object",
+                "properties": {
+                    "access_token": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "searchSchema": {
+                "type": "object",
+                "properties": {
+                    "cep": {
+                        "type": "string"
+                    }
+                }
+            },
+            "weatherSchema": {
+                "type": "object",
+                "properties": {
+                    "atualizacao": {
+                        "type": "string"
+                    },
+                    "bairro": {
+                        "type": "string"
+                    },
+                    "cep": {
+                        "type": "string"
+                    },
+                    "complemento": {
+                        "type": "string"
+                    },
+                    "ddd": {
+                        "type": "string"
+                    },
+                    "gia": {
+                        "type": "string"
+                    },
+                    "ibge": {
+                        "type": "string"
+                    },
+                    "localidade": {
+                        "type": "string"
+                    },
+                    "logradouro": {
+                        "type": "string"
+                    },
+                    "previsao": {
+                        "type": "list"
+                    },
+                    "siafi": {
+                        "type": "string"
+                    },
+                    "uf": {
+                        "type": "string"
+                    }
+                }
+            },
+            "errorSchema": {
+                "type": "object",
+                "properties": {
+                    "status_code": {
+                        "type": "string"
+                    },
+                    "body": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "apiKeyAuth": {
+              "type": "apiKey",
+              "name": "x-access-token",
+              "in": "header"
+            }
+        }
+    },
+    "paths": {
+        "/signup": {
+            "post": {
+                "tags": [
+                    "Login API"
+                ],
+                "summary": "para cadastrar o usuário no banco de dados e autenticar",
+                "requestBody": {
+                    "description": "cadastra um usuário no MongoDb",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/signupSchema"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/authSchema"
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "$ref": "#/components/schemas/errorSchema"
+                        }
+                    },
+                    "403": {
+                        "description": "FORBIDDEN",
+                        "schema": {
+                            "$ref": "#/components/schemas/errorSchema"
+                        }
+                    },
+                    "500": {
+                        "description": "SERVER ERROR",
+                        "schema": {
+                            "$ref": "#/components/schemas/errorSchema"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Login API"
+                ],
+                "summary": "para autenticar o usuário na api",
+                "requestBody": {
+                    "description": "autentica o usuário e retorna o nome e um access token",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/loginSchema"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/authSchema"
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "$ref": "#/components/schemas/errorSchema"
+                        }
+                    },
+                    "401": {
+                        "description": "UNAUTHORIZED",
+                        "schema": {
+                            "$ref": "#/components/schemas/errorSchema"
+                        }
+                    },
+                    "500": {
+                        "description": "SERVER ERROR",
+                        "schema": {
+                            "$ref": "#/components/schemas/errorSchema"
+                        }
+                    }
+                }
+            }
+        },
+        "/data": {
+            "post": {
+                "tags": [
+                    "Weather Data API"
+                ],
+                "summary": "para buscar dados da previsão do tempo",
+                "security": [
+                    {"apiKeyAuth": []
+                }],
+                "requestBody": {
+                    "description": "busca a previsão do tempo de 4 dias de uma cidade específicada pelo cep",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/searchSchema"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/weatherSchema"
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "$ref": "#/components/schemas/errorSchema"
+                        }
+                    },
+                    "401": {
+                        "description": "UNAUTHORIZED",
+                        "schema": {
+                            "$ref": "#/components/schemas/errorSchema"
+                        }
+                    },
+                    "500": {
+                        "description": "SERVER ERROR",
+                        "schema": {
+                            "$ref": "#/components/schemas/errorSchema"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
