@@ -19,4 +19,3 @@ rodando a aplicação
 ## utilizando no docker
 
 ``docker-compose up -d``
-
