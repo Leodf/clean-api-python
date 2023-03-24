@@ -28,7 +28,7 @@ class DbAuthentication(Authentication):
             if is_valid:
                 access_token = self.encrypter.encrypt(account['id'])
                 self.update_access_token_repository.update_access_token(account['id'], access_token)
-                authentication = AuthEntity(access_token, account['name'])
+                authentication = AuthEntity(access_token, account['id'])
                 return authentication.toJson()
             
         return None

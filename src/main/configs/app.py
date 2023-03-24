@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from src.main.routes import data_route, login_route
 from . import db
+from . import elasticsearch
 from flask_swagger_ui import get_swaggerui_blueprint
 
 def create_app():
@@ -9,6 +10,8 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
     db.init_app(app)
+    elasticsearch.init_app(app)
+    
     app.config['SECRET_KEY'] = 'secret'
     SWAGGER_URL = '/docs'
     API_URL = '/static/swagger.json'
