@@ -6,7 +6,7 @@ services:
     ports:
       - "27018:27017"
     volumes:
-      - ./data:/usr/src/target-api/data/
+      - ./mongodata/:/usr/src/target-api/mongodata/
 
   api:
     container_name: api-container
@@ -15,12 +15,13 @@ services:
     command: sh -c "pip3 install -r requirements.txt && python3 -m src.server"
     environment:
       - MONGO_URL=mongodb://mongodb:27017/target_api
+      - ELASTIC_URL=http://elasticsearch:9200
     ports:
       - "5000:5000"
     volumes:
       - ./src/:/usr/src/target-api/src/
       - ./requirements.txt:/usr/src/target-api/requirements.txt
-    links:
+    depends_on:
       - mongodb
       - elasticsearch
     
